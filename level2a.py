@@ -50,6 +50,10 @@ for vehicle in vehicles:
 max_val_index = None
 min_dist_index = None
 
+curr_veh_capacity = {}
+for vehicle in vehicles: #Storing vehicle capacity details
+	curr_veh_capacity[vehicle] = json_load['vehicles'][vehicle]['capacity']
+
 while not all(visited):
 	for vehicle in vehicles:
 		while curr_result[vehicle][-1]!='r0' and len(curr_result[vehicle])>=2:
@@ -61,16 +65,16 @@ while not all(visited):
 				if neigh_data[curr_result[vehicle][-1]][0][i] == 0:
 					continue
 				if float(orders/neigh_data[curr_result[vehicle][-1]][0][i]) > max_val and not visited[i]:
-					max_val = orders/neigh_data[curr_list[-1]][0][i]
+					max_val = orders/neigh_data[curr_result[vehicle][-1]][0][i]
 					max_val_index = i
 
-		if curr_capacity < orders:
-			curr_list.append('r0')
-			result_list.append(curr_list)
-		else:
-			visited[max_val_index] = True
-			curr_list.append('n' + str(max_val_index))
-			curr_capacity -= orders
+			if curr_veh_capacity[vehicle] < orders:
+				curr_result[vehicle].append('r0')
+				result_list.append(curr_list)
+			else:
+				visited[max_val_index] = True
+				curr_list.append('n' + str(max_val_index))
+				curr_capacity -= orders
 
 	curr_list = ['r0']
 	curr_capacity = tot_capacity
